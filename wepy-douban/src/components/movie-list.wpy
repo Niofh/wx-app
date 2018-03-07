@@ -1,0 +1,78 @@
+<template>
+  <view>
+    <view class="movie-list-wrapper">
+      <view class='movie-head'>
+        <text class="slogan">{{movieData.name}}</text>
+        <view class="more">
+          <text class="more-text">更多</text>
+          <image class="more-image" src="/images/icon/arrow-right.png"></image>
+        </view>
+      </view>
+      <view class="movies-wrapper">
+        <repeat for="{{movieData.movies}}" key="index" index="index" item="movie">
+          <movieTemplate :movie.sync="movie"  ></movieTemplate>
+        </repeat>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import MovieTemplate from "./movie-template";
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class MovieList extends wepy.component {
+
+    onLoad(){
+      console.log(this.movieData)
+    }
+    props = {
+      movieData: Object
+    };
+
+    components = {
+      movieTemplate: MovieTemplate
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .movie-list-wrapper {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .movie-head {
+    padding: rpx(30) rpx(20) rpx(22);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .slogan {
+    font-size: rpx(24);
+
+  }
+
+  .more-text {
+    vertical-align: middle;
+    margin-right: rpx(10);
+    color: #1f4ba5;
+  }
+
+  .more-image {
+    width: rpx(9);
+    height: rpx(16);
+    vertical-align: middle;
+  }
+
+  .movies-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+</style>

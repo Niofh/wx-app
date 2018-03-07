@@ -1,0 +1,18 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/base/base",
+    "pages/form/form",
+    "pages/map/map",
+    "pages/mapContext/mapContext",
+    "pages/logs/logs"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#321",
+    "navigationBarTitleText": "微信小程序",
+    "navigationBarTextStyle":"#fff",
+    "backgroundColor":"#321",
+    "backgroundTextStyle":"light"
+  }
+}

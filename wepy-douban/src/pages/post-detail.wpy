@@ -1,0 +1,227 @@
+<template>
+  <view class="container">
+    <image class='header-image' src="{{post.headImgSrc}}">
+
+    </image>
+    <image @tap.stop='onPlay' class="audio" src="/images/music/{{isPlayMusic?'music-stop':'music-start'}}.png">
+    </image>
+
+    <view class="author-date">
+      <image class="avatar" src="{{post.avatar}}"></image>
+      <text class="author">{{post.author}}</text>
+      <text class="const-text">发表于</text>
+      <text class="date">{{post.date}}</text>
+    </view>
+    <text class="title">{{post.title}}</text>
+    <view class="tool">
+      <view class="circle-img">
+        <image class="collection" @tap.stop='collectionTap'
+               src="/images/icon/{{collection?'collection':'collection-anti'}}.png"></image>
+        <button open-type="share" class="share-img">
+          <image src="/images/icon/share.png"></image>
+        </button>
+      </view>
+      <view class="hr"></view>
+    </view>
+    <text class="detail">
+      {{post.detail}}
+    </text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import postData from "../data/posts-data.js";
+
+
+  const POST_STORGE = "postsDetail";
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class PostDetail extends wepy.page {
+    data = {
+      post: {},
+      postId: "",
+      collection: false,
+      isPlayMusic: false,
+    };
+
+    onLoad(options) {
+      this.postId = options.id;
+      this.post = postData.postList[options.id];
+      this.getPostStroge();
+
+      // 监听音乐播放
+      wx.onBackgroundAudioPlay(() => {
+        this.isPlayMusic = true;
+      });
+
+      wx.onBackgroundAudioPause(() => {
+        this.isPlayMusic = false;
+      });
+    }
+
+    methods = {
+      collectionTap() {
+        let postStorge = wepy.getStorageSync(POST_STORGE);
+        const postId = "postId" + this.postId;
+        postStorge[postId] = !postStorge[postId];
+        this.collection = postStorge[postId];
+        wepy.setStorageSync(POST_STORGE, postStorge);
+
+        wepy.showToast({
+          title: this.collection ? "收藏成功" : "取消成功",
+          icon: "success"
+        });
+      },
+      onPlay() {
+        const musicData = this.post.music;
+        let isPlay = this.isPlayMusic;
+        isPlay = !isPlay;
+        if (isPlay) {
+          wepy.playBackgroundAudio({
+            dataUrl: musicData.url,
+            title: musicData.title,
+            coverImgUrl: musicData.coverImg
+          });
+        } else {
+          wepy.pauseBackgroundAudio();
+        }
+        this.isPlayMusic = isPlay;
+      }
+    };
+
+    getPostStroge() {
+      let postStorge = wepy.getStorageSync(POST_STORGE);
+      const postId = "postId" + this.postId;
+      if (!postStorge) {
+        postStorge = {
+          [postId]: false
+        };
+        wepy.setStorageSync(POST_STORGE, postStorge);
+      } else {
+        this.collection = postStorge[postId];
+      }
+    }
+
+    // page才有config
+    config = {
+      "navigationBarTitleText": "阅读",
+      "navigationBarBackgroundColor": "#405f80",
+      "navigationBarTextStyle": "#fff"
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-image {
+    width: 100%;
+    height: rpx(460);
+  }
+
+  .audio {
+    position: absolute;
+    left: 50%;
+    top: rpx(230);
+    margin-left: rpx(-75);
+    margin-top: rpx(-75);
+    width: rpx(150);
+    height: rpx(150);
+  }
+
+  .author-date {
+    display: flex;
+    flex-direction: row;
+    margin: rpx(20) 0 0 rpx(30);
+    line-height: rpx(64);
+  }
+
+  .avatar {
+    width: rpx(64);
+    height: rpx(64);
+    vertical-align: middle;
+  }
+
+  .author {
+    font-size: rpx(30);
+    font-weight: bold;
+    color: #666;
+    vertical-align: middle;
+    margin-left: rpx(20);
+  }
+
+  .const-text, .date {
+    font-size: rpx(24);
+    margin-left: rpx(20);
+    color: #999;
+  }
+
+  .title {
+    font-weight: bold;
+    margin-left: rpx(40);
+    margin-top: rpx(30);
+    font-size: rpx(36);
+    color: #4b556c;
+    letter-spacing: 2px;
+  }
+
+  .tool {
+    margin-top: rpx(20);
+  }
+
+  .circle-img {
+    float: right;
+    margin-right: rpx(40);
+    vertical-align: middle;
+  }
+
+  .circle-img image {
+    width: rpx(90);
+    height: rpx(90);
+  }
+
+  .collection {
+    margin-right: rpx(30);
+  }
+
+  .share-img {
+    position: relative;
+    display: inline-block;
+    width: rpx(90);
+    height: rpx(90);
+    border-radius: 50%;
+  }
+
+  .share-img image {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .hr {
+    width: rpx(660);
+    height: rpx(2);
+    background-color: #e5e5e5;
+    vertical-align: middle;
+    position: relative;
+    top: rpx(46);
+    margin: 0 auto;
+    z-index: -99;
+  }
+
+  .detail {
+    color: #666;
+    margin: rpx(20) rpx(30) 0;
+    line-height: rpx(44);
+    letter-spacing: 2px;
+    padding-bottom: rpx(10);
+    font-size: rpx(28);
+  }
+
+</style>

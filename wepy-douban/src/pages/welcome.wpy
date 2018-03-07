@@ -1,0 +1,95 @@
+<template>
+  <view class="welcome">
+    <view class="container">
+      <image class="user-avatar" src="{{userInfo.avatarUrl}}"></image>
+      <text class="user-name">Hello,{{userInfo.nickName}}</text>
+      <view class="moto-container" @tap="jump()">
+        <text class="moto">开启小程序之旅</text>
+      </view>
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class Welcome extends wepy.page {
+    data = {
+      userInfo: {},
+    };
+
+
+
+    onLoad() {
+      this.getUserInfo();
+    }
+
+    methods = {
+      jump() {
+        wepy.switchTab({
+          url: '/pages/posts',
+        });
+      }
+    };
+
+    async getUserInfo() {
+      const userInfo = await this.$parent.getUserInfo();
+      if (userInfo) {
+        this.userInfo = userInfo;
+        // 异步获取数据需要调用这个方法
+        this.$apply();
+      }
+    }
+
+    config = {
+      "navigationBarBackgroundColor": "#b3d4db"
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .welcome {
+    width 100%;
+    height 100%;
+    background #b3d4db
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #b3d4db
+  }
+
+  .user-avatar {
+    width: rpx(200);
+    height: rpx(200);
+    margin-top: rpx(160);
+    border-radius: 50%;
+  }
+
+  .user-name {
+    margin-top: rpx(100);
+    font-size: rpx(32);
+    font-weight: bold;
+  }
+
+  .moto-container {
+    margin-top: rpx(200);
+    width: rpx(200);
+    height: rpx(80);
+    border-radius: rpx(5);
+    text-align: center;
+    border: rpx(1) solid #405f80;
+  }
+
+  .moto {
+    line-height: rpx(80);
+    font-size: rpx(22);
+    font-weight: bold;
+    color: #405f80;
+  }
+
+</style>

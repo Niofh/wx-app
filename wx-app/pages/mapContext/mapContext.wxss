@@ -1,0 +1,7 @@
+/* pages/mapContext/mapContext.wxss */
+
+
+#myMap{
+    width: 100%;
+    height: 300px
+}

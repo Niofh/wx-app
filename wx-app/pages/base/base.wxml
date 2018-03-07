@@ -1,0 +1,9 @@
+<!--pages/base/base.wxml-->
+
+
+
+
+<text selectable="true">文字可以选中复制</text>
+
+<view>渲染html字符串转换为dom</view>
+<rich-text nodes="{{nodes}}" ></rich-text>

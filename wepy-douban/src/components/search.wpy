@@ -1,0 +1,112 @@
+<template>
+  <view class="search">
+    <icon type="search" class="search-img" size="13" color="#405f80"></icon>
+    <input type="text" value="{{searchValue}}" placeholder="{{placeholder}}" confirm-type="搜索"
+           placeholder-class="placeholder" @focus.stop="onBindFocus" @blur.stop="onBindBlur"
+           @confirm="onInputConfirm" @input="onInput"/>
+    <image wx:if="{{searchPanelShow}}" src="/images/icon/xx.png" class="xx-img" @tap="onCancelImgTap"></image>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class Search extends wepy.component {
+
+    props = {
+      containerShow:{
+        type: Boolean,
+        default: false,
+        twoWay: true  // wepy相向数据
+      },
+      placeholder: {
+        type: String,
+        default: ""
+      },
+      searchValue: {
+        type: String,
+        default: "",
+        twoWay: true  // wepy相向数据
+      },
+      searchPanelShow: {
+        type: Boolean,
+        default: false,
+        twoWay: true  // wepy相向数据
+      }
+    };
+
+    methods = {
+      onBindFocus(event) {
+        this.searchPanelShow = true;
+        this.containerShow=false;
+        this.$apply();
+      },
+      onBindBlur(event) {
+        if(this.searchValue===""){
+          this.$emit("searchBlur")
+        }
+      },
+      onInputConfirm(event) {
+        this.$emit("searchConfirm", event.detail.value)
+      },
+      onInput(event){
+        this.searchValue = event.detail.value;
+        this.$apply();
+      },
+      onCancelImgTap(event) {
+        this.$emit("searchBlur");
+        this.searchValue = "";
+        this.containerShow=true;
+        this.searchPanelShow = false;
+        this.$apply();
+      }
+    };
+
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .search {
+    background-color: #f2f2f2;
+    height: rpx(80);
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .search-img {
+    margin: auto 0 auto rpx(20);
+  }
+
+  .search input {
+    height: 100%;
+    width: rpx(600);
+    margin-left: 20px;
+    font-size: rpx(28);
+  }
+
+  .placeholder {
+    font-size: 14px;
+    color: #d1d1d1;
+    margin-left: rpx(20);
+  }
+
+  .movies-template {
+    margin-bottom: rpx(30);
+  }
+
+  .search-panel {
+    position: absolute;
+    top: rpx(80);
+  }
+
+  .xx-img {
+    height: rpx(30);
+    width: rpx(30);
+    margin: auto 0 auto rpx(10);
+  }
+</style>

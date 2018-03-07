@@ -1,0 +1,108 @@
+<template>
+  <view class="post-container" @tap="jumpPostDetail({{post.postId}})">
+    <view class="post-avatar-date">
+      <image class='post-avatar' src="{{post.avatar}}"></image>
+      <text class="post-date">{{post.date}}</text>
+    </view>
+    <text class="post-title">{{post.title}}</text>
+    <image class='post-image' src="{{post.imgSrc}}"></image>
+    <text class='post-content'>{{post.content}}</text>
+    <view class='post-link'>
+      <image class='post-link-image' src="/images/icon/chat.png"></image>
+      <text class='post-link-font'>{{post.reading}}</text>
+      <image class='post-link-image' src="/images/icon/view.png"></image>
+      <text class='post-link-font'>{{post.collection}}</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class postItem extends wepy.component {
+    props = {
+      post: Object
+    };
+    methods = {
+      jumpPostDetail(id) {
+        wepy.navigateTo({
+          url:"/pages/post-detail?id="+id
+        })
+      }
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .post-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: rpx(20);
+    margin-bottom: rpx(40);
+    background-color: #fff;
+    border-bottom: rpx(1) solid #ededed;
+    padding-bottom: 5px;
+  }
+
+  .post-avatar-date {
+    margin: 10px 0 rpx(20) 10px;
+  }
+
+  .post-avatar {
+    width: rpx(60);
+    height: rpx(60);
+    vertical-align: middle;
+    margin-bottom: 5px;
+    font-size: rpx(26);
+  }
+
+  .post-date {
+    margin-left: rpx(20);
+    vertical-align: middle;
+  }
+
+  .post-title {
+    font-size: rpx(32);
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    margin-left: 10px;
+  }
+
+  .post-image {
+    width: 100%;
+    height: rpx(400);
+    margin-bottom: 15px;
+  }
+
+  .post-content {
+    margin-left: 10px;
+    margin-bottom: rpx(20);
+    font-size: rpx(28);
+    line-height: rpx(40);
+    letter-spacing: rpx(2);
+    color: #333;
+  }
+
+  .post-link {
+    display: flex;
+    margin-left: 10px;
+    line-height: 16px;
+  }
+
+  .post-link-image {
+    height: 16px;
+    width: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .post-link-font {
+    vertical-align: middle;
+    margin-right: 20px;
+  }
+</style>

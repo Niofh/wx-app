@@ -1,0 +1,63 @@
+<template>
+  <view>
+    <swiper class="swiper" indicator-dots="true" autoplay="true" indicator-color="#b3d4db"
+            indicator-active-color="#b3d4aa" circular="true">
+      <swiper-item>
+        <image class='swiper-image' src="/images/wx.png" @tap='jumpPostDetail(3)'></image>
+      </swiper-item>
+      <swiper-item>
+        <image class='swiper-image' src="/images/vr.png" @tap='jumpPostDetail(4)'></image>
+      </swiper-item>
+      <swiper-item>
+        <image class='swiper-image' src="/images/iqiyi.png" @tap='jumpPostDetail(5)'></image>
+      </swiper-item>
+    </swiper>
+
+    <repeat for="{{postList}}" key="index" index="index" item="post">
+      <postItem :post="post"></postItem>
+    </repeat>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import postData from "../data/posts-data.js";
+  import PostItem from "../components/post-item";
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class Posts extends wepy.page {
+    data = {
+      postList: []
+    };
+    onLoad() {
+      this.postList = postData.postList;
+    }
+    methods = {
+      jumpPostDetail(id){
+        wepy.navigateTo({
+          url:"/pages/post-detail?id="+id
+        })
+      }
+    };
+    components = {
+      postItem: PostItem
+    };
+    // page才有config
+    config = {
+      "navigationBarBackgroundColor": "#405f80",
+      "navigationBarTextStyle": "#fff",
+      "navigationBarTitleText": "文与字"
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .swiper, .swiper-image {
+    width: 100%;
+    height: rpx(500);
+  }
+</style>

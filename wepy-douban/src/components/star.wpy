@@ -1,0 +1,56 @@
+
+
+
+<template>
+
+  <view class="stars-wrapper">
+    <view class="starts">
+      <slot name="starsWrap">
+
+      </slot>
+    </view>
+
+    <text class="start-scroe" >
+      <slot name="average"> </slot>
+    </text>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class Star extends wepy.component {
+  }
+</script>
+
+<style lang="stylus">
+  @import "../stylus/common.styl"
+  .stars-wrapper {
+    display: flex;
+  }
+
+  .starts {
+    height: rpx(17);
+    margin-right: rpx(24);
+  }
+
+  .starts > view {
+    display inline-block
+  }
+
+  .starts .star-image {
+    padding-left: rpx(3);
+    width: rpx(17);
+    height: rpx(17);
+  }
+
+  .start-scroe {
+    margin-top 12rpx;
+    color: #1f3463;
+  }
+
+</style>

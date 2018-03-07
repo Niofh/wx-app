@@ -1,0 +1,131 @@
+<template>
+  <view class="movies">
+    <search :containerShow.sync="containerShow" :searchValue.sync="searchValue" :searchPanelShow.sync="searchPanelShow"
+            placeholder="血战钢锯岭、你的名字"></search>
+    <view wx:if="{{containerShow}}">
+      <movieList :movieData.sync="inTheaters"></movieList>
+      <view class="line"></view>
+      <movieList :movieData.sync="comingSoon"></movieList>
+      <view class="line"></view>
+      <movieList :movieData.sync="top250"></movieList>
+    </view>
+
+    <view wx:if="{{!containerShow}}">
+      <view class="search-movies">
+        <repeat for="{{searchMovie.movies}}" key="index" index="index" item="movie">
+          <movieTemplate :movie.sync="movie"></movieTemplate>
+        </repeat>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import MovieList from "../components/movie-list";
+  import Search from "../components/search";
+  import MovieTemplate from "../components/movie-template";
+  import {renderStars} from "../utlis/utlis";
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class Movies extends wepy.page {
+    data = {
+      searchPanelShow: false,
+      containerShow: true, // false显示搜索
+      searchValue: "",
+      average: 5,
+      inTheaters: {
+        name: "正在热映",
+        movies: []
+      },
+      comingSoon: {
+        name: "即将上映",
+        movies: []
+      },
+      top250: {
+        name: "top250",
+        movies: []
+      },
+      searchMovie: {
+        name: "searchMovie",
+        movies: []
+      }
+    };
+
+    // 自定义事件
+    events = {
+      'searchConfirm': (searchValue, $event) => {
+        this.searchValue = searchValue;
+        this.searchMovies(this.searchValue);
+      },
+      'searchBlur': () => {
+        this.searchMovie.movies = [];
+      }
+    };
+
+    onLoad() {
+      this.initData();
+    }
+
+
+    // 请求数据
+    initData() {
+      const doubanBase = this.$parent.globalData.doubanBase;
+      const params = "?start=0&count=3";
+      const top250 = doubanBase + '/v2/movie/top250' + params;
+      const inTheaters = doubanBase + '/v2/movie/in_theaters' + params;
+      const comingSoon = doubanBase + '/v2/movie/coming_soon' + params;
+      this.setMovieData(inTheaters, "inTheaters");
+      this.setMovieData(top250, "top250");
+      this.setMovieData(comingSoon, "comingSoon");
+    }
+
+    searchMovies(value) {
+      const doubanBase = this.$parent.globalData.doubanBase;
+      const searchMovie = doubanBase + "/v2/movie/search?q=" + value;
+      this.setMovieData(searchMovie, "searchMovie");
+    }
+
+    setMovieData(url, name) {
+      wepy.request(url).then(res => {
+        const subjects = res.data.subjects;
+        subjects.map(item => {
+          let average = item.rating.average;
+          item.stars = renderStars(average);
+          return item;
+        });
+        this[name].movies = subjects;
+        this.$apply();
+      });
+    }
+
+    components = {
+      movieList: MovieList,
+      search: Search,
+      movieTemplate: MovieTemplate,
+    };
+    // page才有config
+    config = {
+      navigationBarTitleText: '电影列表'
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .movies {
+    .line {
+      height rpx(30);
+      background: #f2f2f2
+    }
+  }
+
+  .search-movies {
+    .movie-wrapper {
+      margin-bottom rpx(20);
+      float left;
+    }
+  }
+</style>

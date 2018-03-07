@@ -1,0 +1,77 @@
+<script>
+  import wepy from 'wepy';
+  import 'wepy-async-function';
+
+  export default class extends wepy.app {
+
+    globalData = {
+      userInfo: null,
+      doubanBase:"http://t.yushu.im"
+    };
+
+    constructor() {
+      super();
+      this.use('requestfix');
+      this.use('promisify');
+    }
+    onLaunch() {
+    }
+
+    async getUserInfo() {
+      const that = this;
+      if (this.globalData.userInfo) {
+        return this.globalData.userInfo;
+      }
+      // 启动了promise
+      const res = await wepy.getUserInfo();
+      that.globalData.userInfo = res.userInfo;
+      return res.userInfo;
+    }
+
+    // app.json
+    config = {
+      pages: [
+        'pages/welcome',
+        'pages/movies',
+        'pages/posts',
+        'pages/post-detail',
+      ],
+      window: {
+        navigationBarBackgroundColor: '#405f80',
+      },
+      "tabBar": {
+        "borderStyle": "white",
+        "selectedColor": "#405f80",
+        "list": [
+          {
+            "pagePath": "pages/posts",
+            "text": "文章",
+            "iconPath": "/images/tab/yuedu.png",
+            "selectedIconPath": "/images/tab/yuedu_hl.png"
+          },
+          {
+            "pagePath": "pages/movies",
+            "text": "电影",
+            "iconPath": "/images/tab/dianying.png",
+            "selectedIconPath": "/images/tab/dianying_hl.png"
+          }
+        ]
+      }
+    };
+  }
+</script>
+
+<style lang="stylus">
+  @import "./stylus/common.styl"
+  page {
+    width 100%;
+    height 100%
+  }
+
+  text {
+    font-family: Microsoft YaHei;
+    font-size: rpx(24);
+  }
+
+
+</style>

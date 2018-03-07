@@ -1,0 +1,58 @@
+<template>
+  <view class="movie-wrapper">
+    <image class="movie-img" src="{{movie.images.large}}"></image>
+    <text class="movie-title">{{movie.title}}</text>
+    <star>
+      <view slot="starsWrap">
+        <block wx:for="{{movie.stars}}" wx:key="{{index}}" wx:for-item="item">
+          <image class="star-image" src="/images/icon/{{item?'star':'none-star'}}.png"></image>
+        </block>
+      </view>
+      <text slot="average">{{movie.rating.average}}</text>
+    </star>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import Star from "./star";
+
+  /**
+   *  pages extends wepy.page
+   *  components  extends wepy.component
+   */
+  export default class MovieTemplate extends wepy.component {
+
+    props = {
+      movie: Object
+    };
+
+    components = {
+      star: Star,
+    };
+  }
+</script>
+
+<style lang="stylus" scoped>
+  @import "../stylus/common.styl"
+  .movie-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 0 rpx(22);
+  }
+
+  .movie-img {
+    width: rpx(200);
+    height: rpx(270);
+    padding-bottom: rpx(20);
+  }
+
+  .movie-title {
+    width: rpx(200);
+    font-size: rpx(24);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+</style>
