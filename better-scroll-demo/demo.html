@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>better-scroll</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            color: #000;
+            border: 1px solid red;
+            overflow: hidden;
+        }
+
+        #down {
+            position: absolute;
+            left: 0;
+            top: -40px;
+        }
+
+        #data2 {
+            position: absolute;
+            left: 0;
+            top: 0px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="content">
+
+        <ul class="ul">
+            <li id="aaaa">
+
+
+            </li>
+            <li>...2</li>
+            <li>...1</li>
+            <li>...2</li>
+            <li>...1</li>
+            <li>...2</li>
+            <li>...1</li>
+            <li>...2</li>
+            <li>...1</li>
+            <li>...2</li>
+            <li>...1</li>
+            <li>...2</li>
+            <li><a href="http://baidu.com">baidu</a></li>
+
+        </ul>
+        <div id="data">数据加载中....</div>
+
+    </div>
+    <div id="down">下拉刷新</div>
+    <div id="data2" style="display: none"></div>
+
+    <!-- 这里可以放一些其它的 DOM，但不会影响滚动 -->
+</div>
+<script src="./js/bscroll.min.js"></script>
+<script>
+    var wrapper = document.querySelector('.wrapper');
+    var content = document.querySelector('.content');
+    var data = document.querySelector('#data');
+    var data2 = document.querySelector('#data2');
+    var ul = document.querySelector('.ul');
+    var down = document.querySelector('#down');
+    var scroll = new BScroll(wrapper, {
+        scrollY: true,
+        click: false,
+        probeType: 3,
+        pullDownRefresh: {
+            threshold: 50,
+            stop: 20
+        }
+    });
+    var num = 0;
+    var timer = true;
+    scroll.on("scroll", function (pos) {
+        var _this = this;
+
+        down.style.top = `${Math.min(pos.y - 40, 10)}px`;
+//        if (pos.y === 0) {
+//            down.style.display = "block";
+//        }
+        if (this.y <= (this.maxScrollY + 50)) {
+            if (!timer) return;
+            if (num >= 3) {
+                data.innerText = "到底部了";
+                return;
+            }
+            timer = false;
+            setTimeout(function () {
+                // 如果有新数据
+                for (var i = 0; i < 10; i++) {
+                    var element = document.createElement("li");
+                    element.innerText = "新数据 " + i;
+                    ul.appendChild(element);
+                }
+                _this.refresh();
+                num++;
+                timer = true;
+            }, 100);
+        }
+
+    });
+
+    scroll.on("pullingDown", function () {
+        var _this = this;
+//        down.style.display = "none";
+        setTimeout(function () {
+            data2.style.display = "block";
+            data2.innerText = "加载....";
+        }, 350);
+
+        setTimeout(function () {
+                data2.innerText = "刷新成功！";
+                for (var i = 0; i < 10; i++) {
+                    var element = document.createElement("li");
+                    element.innerText = "新数据 " + i;
+                    ul.appendChild(element);
+                }
+
+                setTimeout(function () {
+                    _this.finishPullDown();  // 告诉用户已经下拉刷新成
+                    _this.refresh();
+                    data2.style.display = "none";
+                }, 600);
+            },
+            2000);
+
+    });
+
+    function finishPullDown(scroll) {
+        return new Promise(function (resolve) {
+            scroll.finishPullDown();
+            resolve();
+        });
+    };
+
+    document.getElementById("aaaa").onclick=function () {
+        console.log(111);
+    }
+
+
+    //    scroll.on("pullingUp", function () {
+    //        console.log(111);
+    //
+    //        setTimeout(function () {
+    //            if (Math.random() > 0.5) {
+    //                // 如果有新数据
+    //                var newPage = [];
+    //                for (var i = 0; i < 10; i++) {
+    //                    newPage.push("我是第" + ++i + "行");
+    //                }
+    //
+    //
+    //            }
+    //        }, 1500);
+    //    });
+
+
+</script>
+</body>
+</html>
